@@ -4,6 +4,8 @@ Step-1:
 
 In 'pre_alpha_clean_version' folder, 
 
+**Edit line 47 in helper_mapdriver.py. Enter your Google API Key there.**
+
 ```
 python roadtagger_generate_dataset.py config/dataset_180tiles.json 
 ```
