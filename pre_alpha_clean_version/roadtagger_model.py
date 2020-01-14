@@ -21,10 +21,10 @@ class DeepRoadMetaInfoModel():
 	def __init__(self, sess, cnn_type="simple", gnn_type="simple", loss_func = "L2", number_of_gnn_layer= 4, lane_number_weight = 1.0, parking_weight = 1.0, biking_weight = 1.0, roadtype_weight = 1.0, noLeftRight = False, reuse = True, GRU=False, use_old_tf_common_layer = False, use_batchnorm = False, stage=None, homogeneous_loss_factor = 1.0):
 		global common 
 
-		if use_old_tf_common_layer == True :
-			import tf_common_layer_before20190225 as common
-		else:
-			import tf_common_layer as common
+		# if use_old_tf_common_layer == True :
+		# 	import tf_common_layer_before20190225 as common
+		# else:
+		# 	import tf_common_layer as common
 
 		self.stage = stage 
 		self.use_batchnorm = use_batchnorm
