@@ -10,9 +10,9 @@ Inferring road attributes such as lane count and road type from satellite imager
 
 ![fig1](https://github.com/mitroadmaps/roadtagger/blob/master/figure/real.png "Results on Real-world Imagery")
 
-**Results on Synthesised Imagery**
+**Results on Synthesized Imagery**
 
-![fig2](https://github.com/mitroadmaps/roadtagger/blob/master/figure/synthesised.png "Results on Real-world Imagery")
+![fig2](https://github.com/mitroadmaps/roadtagger/blob/master/figure/synthesised.png "Results on Synthesized Imagery")
 
 
 
@@ -20,9 +20,9 @@ Inferring road attributes such as lane count and road type from satellite imager
 
 ### About this Repository 
 
-This repository consists of the source code of the RoadTagger [paper](https://arxiv.org/abs/1912.12408) and a generic version of the RoadTagger model (under development). The original source code of RoadTagger is in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder.
+This repository consists of the source code of the [paper](https://arxiv.org/abs/1912.12408) and a generic version of the RoadTagger model (under development). The original source code of RoadTagger is in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder.
 
-**Important** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially be more efficient than just trying to make the code in this repo run. :-) 
+**IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially be more efficient than just trying to make the code in this repo run. :-) 
 
 
 ### Download the Dataset
