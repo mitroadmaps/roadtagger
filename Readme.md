@@ -6,12 +6,13 @@ RoadTagger Paper: https://arxiv.org/abs/1912.12408
 
 Inferring road attributes such as lane count and road type from satellite imagery is challenging. Often, due to the occlusion in satellite imagery and the spatial correlation of road attributes, a road attribute at one position on a road may only be apparent when considering far-away segments of the road. Thus, to robustly infer road attributes, the model must integrate scattered information and capture the spatial correlation of features along roads. Existing solutions that rely on image classifiers fail to capture this correlation, resulting in poor accuracy. We find this failure is caused by a fundamental limitation -- the limited effective receptive field of image classifiers. To overcome this limitation, we propose RoadTagger, an end-to-end architecture which combines both Convolutional Neural Networks (CNNs) and Graph Neural Networks (GNNs) to infer road attributes. The usage of graph neural networks allows information propagation on the road network graph and eliminates the receptive field limitation of image classifiers. We evaluate RoadTagger on both a large real-world dataset covering 688 km^2 area in 20 U.S. cities and a synthesized micro-dataset. In the evaluation, RoadTagger improves inference accuracy over the CNN image classifier based approaches. RoadTagger also demonstrates strong robustness against different disruptions in the satellite imagery and the ability to learn complicated inductive rules for aggregating scattered information along the road network.
 
-**Results**
+**Results on Real-world Imagery**
 
+![fig1](https://github.com/mitroadmaps/roadtagger/blob/master/figure/real.png "Results on Real-world Imagery")
 
+**Results on Synthesised Imagery**
 
-
-
+![fig2](https://github.com/mitroadmaps/roadtagger/blob/master/figure/synthesised.png "Results on Real-world Imagery")
 
 
 
