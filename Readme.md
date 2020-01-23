@@ -1,3 +1,29 @@
+### RoadTagger
+
+RoadTagger Paper: https://arxiv.org/abs/1912.12408
+
+**Abstract:**
+
+Inferring road attributes such as lane count and road type from satellite imagery is challenging. Often, due to the occlusion in satellite imagery and the spatial correlation of road attributes, a road attribute at one position on a road may only be apparent when considering far-away segments of the road. Thus, to robustly infer road attributes, the model must integrate scattered information and capture the spatial correlation of features along roads. Existing solutions that rely on image classifiers fail to capture this correlation, resulting in poor accuracy. We find this failure is caused by a fundamental limitation -- the limited effective receptive field of image classifiers. To overcome this limitation, we propose RoadTagger, an end-to-end architecture which combines both Convolutional Neural Networks (CNNs) and Graph Neural Networks (GNNs) to infer road attributes. The usage of graph neural networks allows information propagation on the road network graph and eliminates the receptive field limitation of image classifiers. We evaluate RoadTagger on both a large real-world dataset covering 688 km^2 area in 20 U.S. cities and a synthesized micro-dataset. In the evaluation, RoadTagger improves inference accuracy over the CNN image classifier based approaches. RoadTagger also demonstrates strong robustness against different disruptions in the satellite imagery and the ability to learn complicated inductive rules for aggregating scattered information along the road network.
+
+**Results**
+
+
+
+
+
+
+
+
+
+
+### About this Repository 
+
+This repository consists of the source code of the RoadTagger [paper](https://arxiv.org/abs/1912.12408) and a generic version of the RoadTagger model (under development). The original source code of RoadTagger is in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder.
+
+**Important** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially be more efficient than just trying to make the code in this repo run. :-) 
+
+
 ### Download the Dataset
 
 Step-1:
@@ -12,6 +38,13 @@ python roadtagger_generate_dataset.py config/dataset_180tiles.json
 
 This script will download the dataset with 20 cities into the 'dataset' folder. 
 
+**BEFORE** running this script, it would be highly recommended to try the sample dataset first to make sure there is no runtime issues.
+
+```
+python roadtagger_generate_dataset.py config/dataset_sample.json 
+```
+The code automatically download OpenStreetMap data into the 'tmp' folder. Because the OpenStreetMap is changing all the time, we put the snapshots of four regions in the 'tmp' folder. The manual annotation in Step-2 **ONLY** matches these snapshots. 
+
 
 Step-2:
 
@@ -24,9 +57,9 @@ cp annotation dc_region_0_1_annotation.p dataset/dc_auto/region_0_1/annotation.p
 cp annotation seattle_region_0_1_annotation.p dataset/seattle_auto/region_0_1/annotation.p
 ```
 
-
-
 ### Train RoadTagger Model
+
+Use the following code to train the model. 
 
 ```
 time python roadtagger_train.py \
@@ -43,6 +76,9 @@ time python roadtagger_train.py \
 --homogeneous_loss_factor 3.0 \
 --dataset config/dataset_180tiles.json
 ```
+
+Here, the model is a CNN + GNN model. The GNN uses Gated Recurrent Unit (GRU). The propagation step of the graph neural network is 8. The graph neural network uses the graph structures that consists of the Road Bidirectional Decomposition graph, the original road graph and the auxiliary graph for parallel roads.  
+
 
 ### Evaluate the Model 
 
