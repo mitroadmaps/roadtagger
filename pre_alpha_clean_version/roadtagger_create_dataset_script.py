@@ -35,7 +35,7 @@ for item in dataset_cfg:
     lon = item["lon"]
 
     # Step-1 Generate Config Data
-    Popen("python gen_dataset.py config %f %f %d %d %s" % (lat, lon, ilat, ilon, prefix), shell=True).wait()
+    Popen("python roadtagger_generate_dataset.py config %f %f %d %d %s" % (lat, lon, ilat, ilon, prefix), shell=True).wait()
 
     # Step-2
     # Download dataset from google map and OpenStreetMap
