@@ -18,7 +18,7 @@ from hopcroftkarp import HopcroftKarp
 #from sets import Set
 from subprocess import Popen
 
-import showTOPO
+#import showTOPO
 
 def latlonNorm(p1, lat = 40):
 
@@ -532,7 +532,7 @@ def TOPOGenerateStartingPoints(OSMMap, check = True, density = 0.00050, region =
 		svgEdges.append((OSMMap.nodes[edge[0]][0],OSMMap.nodes[edge[0]][1], OSMMap.nodes[edge[1]][0], OSMMap.nodes[edge[1]][1]))
 
 
-	showTOPO.RenderRegion(result, svgEdges, region, "svg/OSM.svg")
+	#showTOPO.RenderRegion(result, svgEdges, region, "svg/OSM.svg")
 
 
 
@@ -666,8 +666,8 @@ def TOPOGeneratePairs(GPSMap, OSMMap, OSMList, threshold = 0.00010, region = Non
 		svgEdges.append((OSMMap.nodes[edge[0]][0],OSMMap.nodes[edge[0]][1], OSMMap.nodes[edge[1]][0], OSMMap.nodes[edge[1]][1]))
 
 
-	if region is not None:
-		showTOPO.RenderRegion2(OSMList, matchedLoc, svgEdges, region, "coverage.svg")
+	#if region is not None:
+	#	showTOPO.RenderRegion2(OSMList, matchedLoc, svgEdges, region, "coverage.svg")
 
 
 
@@ -1374,7 +1374,7 @@ def TOPOWithPairsNew(GPSMap, OSMMap, GPSList, OSMList, step = 0.00005, r = 0.003
 		if soft == False:
 			cost = 0
 
-		showTOPO.RenderSVG(marbles, holes_bidirection, matched_marbles,matched_holes,  lat, lon, 0.00500, "svg/"+svgname +str(i)+"_"+str(lat)+"_"+str(lon)+".svg")
+		#showTOPO.RenderSVG(marbles, holes_bidirection, matched_marbles,matched_holes,  lat, lon, 0.00500, "svg/"+svgname +str(i)+"_"+str(lat)+"_"+str(lon)+".svg")
 
 		score = cost + (len(marbles) - matchedNum) * threshold * 1.15
 		total_score += score
@@ -1434,7 +1434,7 @@ def TOPOWithList(GPSMap, OSMMap, pairs, step = 0.00005, r = 0.00300, threshold =
 		holes = OSMMap.TOPOWalk(min_node, step = step, r = r, direction = False)
 
 
-		showTOPO.RenderSVG(marbles, holes, lat, lon, 0.00500, "svg/"+str(i)+"_"+str(lat)+"_"+str(lon)+".svg")
+		#showTOPO.RenderSVG(marbles, holes, lat, lon, 0.00500, "svg/"+str(i)+"_"+str(lat)+"_"+str(lon)+".svg")
 
 
 		matchedNum = 0
