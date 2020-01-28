@@ -1,4 +1,4 @@
-import mapdriver as md 
+import helper_mapdriver as md 
 import numpy as np
 import math
 import sys
@@ -7,7 +7,7 @@ import scipy.misc
 import cv2
 from PIL import Image
 import pickle
-import RoadExploreSimplifier as splfy
+import helper_road_structure as splfy
 #import matplotlib.pyplot as plt
 import socket
 import code
