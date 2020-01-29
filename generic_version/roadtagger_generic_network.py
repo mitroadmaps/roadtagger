@@ -17,13 +17,13 @@ import os
 
 from rtree import index
 
-import opengm 
+#import opengm 
 
-from abc import ABC, abstractmethod 
+#from abc import ABC, abstractmethod 
 
 
 class RoadNetwork():
-	def __init__(self, target_dim = 1, loss_func = "L2"):
+	def __init__(self):
 		self.edges = []
 		self.node_degree = {}
 		self.nodes = {}
@@ -35,7 +35,7 @@ class RoadNetwork():
 		self.target = None 
 		self.target_mask = None 
 		self.sat_image = None 
-		self.loss_func = loss_func
+		self.loss_func = "CrossEntropy"
 
 		self.spares_graph_structure = None 
 		self.tf_spares_graph_structure = None 
@@ -74,7 +74,6 @@ class RoadNetwork():
 		print("#### Nodes (%d) ####" % len(self.nodes))
 		for k,v in self.nodes.iteritems():
 			print(k,v)
-
 
 		print("")
 		print("#### Edges (%d) ####" % len(self.edges))
@@ -422,7 +421,7 @@ class RoadNetwork():
 		# self.config 
 
 		# call self.generate_road_segment()
-		
+		pass 
 
 
 	def dumpConsistency(self, root_folder = ""):
@@ -440,10 +439,10 @@ def get_image_coordinate(lat, lon, size, region):
 
 def directionScore(roadNetwork, n1,n2,n3):
 		v1_lat = roadNetwork.nid2loc[n2][0] - roadNetwork.nid2loc[n1][0]
-		v1_lon = (roadNetwork.nid2loc[n2][1] - roadNetwork.nid2loc[n1][1]) * math.cos(math.radians(roadNetwork.nid2loc[n2][0]/111111.0))
+		v1_lon = (roadNetwork.nid2loc[n2][1] - roadNetwork.nid2loc[n1][1]) * math.cos(math.radians(roadNetwork.nid2loc[n2][0]))
 
 		v2_lat = roadNetwork.nid2loc[n3][0] - roadNetwork.nid2loc[n2][0]
-		v2_lon = (roadNetwork.nid2loc[n3][1] - roadNetwork.nid2loc[n2][1]) * math.cos(math.radians(roadNetwork.nid2loc[n2][0]/111111.0))
+		v2_lon = (roadNetwork.nid2loc[n3][1] - roadNetwork.nid2loc[n2][1]) * math.cos(math.radians(roadNetwork.nid2loc[n2][0]))
 
 
 		v1_l = np.sqrt(v1_lat * v1_lat + v1_lon * v1_lon)
@@ -470,13 +469,12 @@ class SubRoadNetwork():
 		self.parentRoadNetowrk = parentRoadNetowrk
 		self.annotation = parentRoadNetowrk.annotation
 		self.config = parentRoadNetowrk.config 
-		
-
+		self.target_shape = parentRoadNetowrk.target_shape
 		self.train_cnn_only = train_cnn_only
 		self.train_cnn_batch = train_cnn_batch
 
 		label_list = []
-		for k in self.parentRoadNetowrk.nodes.keys():
+		for k in self.parentRoadNetowrk.annotation.keys():
 			label_list.append(k) 
 
 		seed_node = random.choice(label_list)
@@ -490,8 +488,6 @@ class SubRoadNetwork():
 
 
 		if train_cnn_only == False:
-
-			
 			# bfs !
 			visited = []
 			newGraphNodes = []
@@ -553,7 +549,7 @@ class SubRoadNetwork():
 			# just random sample nodes with labels 
 			newGraphNodes = []
 
-			for i in xrange(train_cnn_preload):
+			for i in range(train_cnn_preload):
 				newGraphNodes.append(random.choice(label_list))
 				
 
@@ -676,8 +672,8 @@ class SubRoadNetwork():
 		self.remove_adjacent_matrix = remove_adjacent_matrix
 
 		if remove_adjacent_matrix == 1:
-			self.spares_graph_structure['indices'] = [(x,x) for x in xrange(len(self.subGraphNoadList))]
-			self.spares_graph_structure['values'] = [1.0 for x in xrange(len(self.subGraphNoadList))]
+			self.spares_graph_structure['indices'] = [(x,x) for x in range(len(self.subGraphNoadList))]
+			self.spares_graph_structure['values'] = [1.0 for x in range(len(self.subGraphNoadList))]
 			self.spares_graph_structure['shape'] = [len(self.subGraphNoadList), len(self.subGraphNoadList)]
 
 
@@ -713,7 +709,7 @@ class SubRoadNetwork():
 		if no_image == False:
 			c = 0 
 
-			has_titles = os.path.isdir(output_folder + "/"+tiles_name) or os.path.isdir("/data/songtao/DeepRoadMateinfo/"+ self.config["folder"] + "/"+tiles_name)
+			has_titles = os.path.isdir(output_folder +tiles_name) or os.path.isdir(output_folder + "/"+tiles_name) or os.path.isdir("/data/songtao/DeepRoadMateinfo/"+ self.config["folder"] + "/"+tiles_name)
 
 			if has_titles == False:
 				large_image = scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8)
@@ -724,10 +720,11 @@ class SubRoadNetwork():
 					if self.parentRoadNetowrk.preload_img is not None:
 						img = self.parentRoadNetowrk.preload_img[nid]
 					else:
-						print("Error! No preloaded images")
-						exit()
+						#print("Error! No preloaded images")
+						#print(output_folder + "/"+tiles_name)
+						#exit()
 						try:
-							img = scipy.ndimage.imread(output_folder + "/"+tiles_name+"/img_%d.png" % nid).astype(np.float32)/255.0 
+							img = scipy.ndimage.imread(output_folder + "/"+tiles_name+"/img_%d.jpg" % nid).astype(np.float32)/255.0 
 						except:
 
 							img = scipy.ndimage.imread("/data/songtao/DeepRoadMateinfo/"+ self.config["folder"] + "/"+tiles_name+"/img_%d.png" % nid).astype(np.float32)/255.0 
@@ -763,21 +760,13 @@ class SubRoadNetwork():
 				# 	img = img.astype(np.float32)/255.0 
 
 
-
-
-
 				self.images[c,:,:,:] = self.image_augmentation(img, flag=augmentation) 
 				c = c + 1 
 
 
-
-
-
-
-
 		#load targets and masks
 
-		self.targets = np.zeros((self.nonIntersectionNodeNum, 6), dtype = np.int32)
+		self.targets = np.zeros((self.nonIntersectionNodeNum, len(self.target_shape)), dtype = np.int32)
 		self.mask = np.zeros((self.nonIntersectionNodeNum), dtype = np.float32)
 
 		
@@ -884,7 +873,7 @@ class SubRoadNetwork():
 
 		#print(new_neighbor)
 
-		for node_id in xrange(len(self.subGraphNoadList)):
+		for node_id in range(len(self.subGraphNoadList)):
 			if node_id not in new_neighbor:
 				continue
 
@@ -1083,7 +1072,7 @@ class SubRoadNetwork():
 					lon2 = self.parentRoadNetowrk.nid2loc[nnid][1]
 
 					a = lat2 - lat
-					b = (lon2 - lon) * math.cos(math.radians(lat2/111111.0)) 
+					b = (lon2 - lon) * math.cos(math.radians(lat2)) 
 
 
 					d = a*a + b*b
@@ -1154,7 +1143,7 @@ class SubRoadNetwork():
 		self.tf_spares_graph_structure_fully_connected = tf.SparseTensorValue(self.spares_graph_structure_fully_connected['indices'], self.spares_graph_structure_fully_connected['values'], self.spares_graph_structure_fully_connected['shape']) 
 		
 
- 		pass
+		pass
 
 
 	def GetGraphStructure(self):
@@ -1225,7 +1214,7 @@ class SubRoadNetwork():
 
 
 		if use_random:
-			for i in xrange(int(size*rate)):
+			for i in range(int(size*rate)):
 				c = random.randint(0,size-1)
 				ret[c,:] = np.random.uniform(-1.0, 1.0, size=62)
 				gradient_mask[c,:] = 1.0
@@ -1256,7 +1245,7 @@ class SubRoadNetwork():
 		return self.homogeneous_loss_mask
 
 
-	def image_augmentation(self, img, flag = True ):
+	def image_augmentation(self, img, flag = False ):
 
 		img = np.copy(img)
 
@@ -1293,8 +1282,8 @@ class SubRoadNetwork():
 
 				d = np.shape(self.parentRoadNetowrk.sat_image)[0]
 
-				x0,y0 = get_image_coordinate(loc0[0]/111111.0, loc0[1]/111111.0, d,self.parentRoadNetowrk.region)
-				x1,y1 = get_image_coordinate(loc1[0]/111111.0, loc1[1]/111111.0, d,self.parentRoadNetowrk.region)
+				x0,y0 = get_image_coordinate(loc0[0], loc0[1], d,self.parentRoadNetowrk.region)
+				x1,y1 = get_image_coordinate(loc1[0], loc1[1], d,self.parentRoadNetowrk.region)
 
 
 				cv2.line(img, (y0,x0), (y1,x1), (0,0,255),2)
@@ -1305,7 +1294,8 @@ class SubRoadNetwork():
 	
 		Image.fromarray(img).save(output)
 
-	
+	def GetGraphStructures(self):
+		return [self.tf_spares_graph_structure_fully_connected]
 	
 
 

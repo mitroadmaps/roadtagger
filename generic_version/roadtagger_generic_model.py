@@ -13,12 +13,12 @@ import math
 import svgwrite
 from svgwrite.image import Image as svgimage
 from PIL import Image
-import resnet 
+#import resnet 
 image_size = 384 
 
 
 class RoadTaggerModel():
-	def __init__(self, sess, cnn_type="simple", gnn_type="simple", loss_func = "L2", number_of_gnn_layer= 4, reuse = True, stage=None, homogeneous_loss_factor = 1.0, target_shape = [], graphs_num = 1):
+	def __init__(self, sess, cnn_type="simple2", gnn_type="Generic", loss_func = "L2", number_of_gnn_layer= 4, reuse = True, stage=None, homogeneous_loss_factor = 0.0, target_shape = [], graphs_num = 1):
 
 		self.stage = stage 
 		self.use_batchnorm = True
@@ -29,12 +29,19 @@ class RoadTaggerModel():
 		self.GRU = True
 		self.reuse = reuse 
 		self.graphs_num = graphs_num 
-
+		self.homogeneous_loss_factor = homogeneous_loss_factor
 		self.target_shape = target_shape 
 		self.target_dim = 0
-		for d in target_shape:
-			self.target_dim += d 
+		self.output_dim = 0 
 
+		for d in target_shape:
+			self.target_dim += 1
+			self.output_dim += d 
+
+		print("Target Dim", self.target_dim)
+
+
+		self.number_of_gnn_layer = number_of_gnn_layer 
 
 		self.Build(image_size = 384)
 
@@ -272,7 +279,7 @@ class RoadTaggerModel():
 
 	# 	gcn_loop = [gcn4]
 	# 	# unroll ?
-	# 	for i in xrange(loop):
+	# 	for i in range(loop):
 	# 		gcn_loop.append(common.create_gcn_layer_2('gcn_loop',gcn_loop[i], self.graph_structure, 128, 128))
 		
 	# 	# skip layer 
@@ -303,7 +310,7 @@ class RoadTaggerModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -348,7 +355,7 @@ class RoadTaggerModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -386,13 +393,13 @@ class RoadTaggerModel():
 		x = tf.layers.dense(inputs=input_features, units=128, activation=tf.nn.leaky_relu)
 		x = tf.layers.dense(inputs=x, units=128, activation=tf.nn.leaky_relu)
 
-		x_gnn = tf.concat([x for i in xrange(num_graphs)], axis = 1)
+		x_gnn = tf.concat([x for i in range(num_graphs)], axis = 1)
 
 		loop = self.number_of_gnn_layer
 		print("Number of GNN layer ", loop)
 
 
-		for i in xrange(loop):
+		for i in range(loop):
 			print("use gru generic")
 			x_gnn = common.create_gcn_layer_GRU_generic_one_fc('gcn_loop', x_gnn, graphs, 128, 128, activation = tf.nn.tanh)
 
@@ -425,7 +432,7 @@ class RoadTaggerModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -465,7 +472,7 @@ class RoadTaggerModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -486,7 +493,7 @@ class RoadTaggerModel():
 		# x__ = tf.layers.dense(inputs=x__, units=128, activation=tf.nn.leaky_relu)
 
 		x__ = x
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -581,7 +588,7 @@ class RoadTaggerModel():
 			print("GNN type", self.gnn_type)
 
 			if self.gnn_type == "Generic":
-				self._output = self._buildGCNRoadGeneric(self.node_feature, self.graph_structures, self.dropout, target_dim = self.target_dim)
+				self._output = self._buildGCNRoadGeneric(self.node_feature, self.graph_structures, self.dropout, target_dim = self.output_dim)
 			else:
 				print("TODO", self.gnn_type)
 				exit() 
@@ -627,12 +634,13 @@ class RoadTaggerModel():
 			self._output_unstacks_reshape.append(tf.reshape(x, shape=[-1,1]))
 		
 		if self.gnn_type != "none":
-			self._output_unstacks_whole_graph = tf.unstack(self._output_whole_graph, axis = 1)
 			self._target_unstacks = tf.unstack(self.target, axis = 1)
-			self._output_unstacks_whole_graph_reshape = []
+			#self._target_unstacks = [tf.reshape(x, shape=[-1,1]) for x in self._target_unstacks]
 			
 
-
+			self._output_unstacks_whole_graph = tf.unstack(self._output_whole_graph, axis = 1)
+			self._output_unstacks_whole_graph_reshape = []
+			
 			for x in self._output_unstacks_whole_graph:
 				#print(x, tf.reshape(x, shape=[-1,1]))
 				self._output_unstacks_whole_graph_reshape.append(tf.reshape(x, shape=[-1,1]))
@@ -642,18 +650,21 @@ class RoadTaggerModel():
 			self.losses = []
 			self.loss = 0 
 			base = 0 
+			cc = 0 
 			for d in self.target_shape:
 				_output = tf.concat(self._output_unstacks_whole_graph_reshape[base:base+d], axis = 1)
 				_output_softmax = tf.nn.softmax(_output)
 
-				_target = tf.concat(self._target_unstacks[base:base+d], axis = 1)
+				#_target = tf.concat(self._target_unstacks[base:base+d], axis = 1)
+				_target = self._target_unstacks[cc]
 
-				loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = self._target, logits = self._output))
+				loss = tf.reduce_mean(tf.multiply(self.global_loss_mask, tf.nn.sparse_softmax_cross_entropy_with_logits(labels = _target, logits = self._output)))
 				self.loss += loss 
 
 				self._output_softmax_whole_graph.append(_output_softmax)
 				self.losses.append(loss)
 				base = base + d
+				cc = cc + 1
 
 
 		if self.gnn_type != "none":
@@ -680,17 +691,10 @@ class RoadTaggerModel():
 
 			self.train_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_fake)
 
-			self.train_lane_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_fake)
-			self.train_type_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_fake)
-			self.train_bike_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_fake)
-
 		else:
-			self.train_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss + loss_addon)
+			self.train_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss) # + loss_addon)
 
-			self.train_lane_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_lane_number + loss_addon)
-			self.train_type_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_roadtype + loss_addon)
-			self.train_bike_op = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss_left_bike + loss_addon)
-
+			
 
 		self.summary_loss = []
 		self.test_loss =  tf.placeholder(tf.float32)
@@ -749,15 +753,13 @@ class RoadTaggerModel():
 			feed_dict[self.graph_structures[i]] = graph 
 			i = i + 1
 
-
 		if train_op is None:
 			train_op = self.train_op
 
-		return self.sess.run([self.loss, self._output_lane_number, self._output_roadtype, self.loss_lane_number, self.loss_left_park, self.loss_left_bike, self.loss_right_bike, self.loss_right_park, self.loss_roadtype,  train_op, self.homogeneous_loss], feed_dict = feed_dict)
+		return self.sess.run([self.loss,  train_op], feed_dict = feed_dict)
 
 	def Evaluate(self, roadNetwork, batch_size = None):
 		r,m = roadNetwork.GetNodeDropoutMask(False, batch_size)
-
 
 		feed_dict = {
 			self.per_node_raw_inputs: roadNetwork.GetImages(batch_size),
