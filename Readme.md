@@ -1,4 +1,4 @@
-### RoadTagger
+##### RoadTagger
 
 RoadTagger Paper: https://arxiv.org/abs/1912.12408
 
@@ -18,13 +18,15 @@ Inferring road attributes such as lane count and road type from satellite imager
 
 
 
-### About this Repository 
+##### About this Repository 
 
-This repository consists of the source code of the [paper](https://arxiv.org/abs/1912.12408) and a generic version of the RoadTagger model (under development). The original source code of RoadTagger is in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder.
+This repository consists of the source code of the [paper](https://arxiv.org/abs/1912.12408) and a [generic version](https://github.com/mitroadmaps/roadtagger/tree/master/generic_version) of the RoadTagger model. The original source code of RoadTagger is in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder.
 
-**IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially be more efficient than just trying to make the code in this repo run. :-) 
+**IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially save your time. :-) 
 
-### Change Log 
+
+
+#### Change Log 
 
 **2020-01-30**
 --------------------
@@ -35,6 +37,14 @@ This repository consists of the source code of the [paper](https://arxiv.org/abs
 - Add example config file, [lightpoles_example.json](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/configs/lightpoles_example.json)
 - Fixed bugs in the [pre-alpha clean version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version). 
 
+#### Instruction for the [generic version](https://github.com/mitroadmaps/roadtagger/tree/master/generic_version) (Recommended for Quick Start)
+
+You can check out the example code for graph loading, training and evaluation in folder [generic_version/](https://github.com/mitroadmaps/roadtagger/tree/master/generic_version).
+
+But for now, you may have to preprocess your training data according to the [example graph loader](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/roadtagger_generic_graph_loader.py). More detailed instructions are coming soon.
+
+
+#### Instruction for the [pre-alpha clean version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version)
 ### Download the Dataset
 
 Step-1:
