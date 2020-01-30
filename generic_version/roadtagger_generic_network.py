@@ -286,8 +286,6 @@ class RoadNetwork():
 			loc1 = self.nid2loc[nid1]
 			loc2 = self.nid2loc[nid2]
 
-
-
 			def inrange(lat,lon, region):
 				lat_mergin = 70*0.5/111111.0
 				lon_mergin = 70*0.5/111111.0 / math.cos(math.radians(region[0]))
@@ -475,7 +473,8 @@ class SubRoadNetwork():
 
 		label_list = []
 		for k in self.parentRoadNetowrk.annotation.keys():
-			label_list.append(k) 
+			if self.parentRoadNetowrk.annotation[k]["remove"] == 0:
+				label_list.append(k) 
 
 		seed_node = random.choice(label_list)
 
@@ -581,8 +580,8 @@ class SubRoadNetwork():
 
 		self.virtual_intersection_node_ptr = len(self.subGraphNoadList)
 
-		self.generate_decomposited_graph()
-		self.generate_auxiliary_graph()
+		#self.generate_decomposited_graph()
+		#self.generate_auxiliary_graph()
 		self.generate_fully_connected_graph()
 
 
@@ -731,6 +730,9 @@ class SubRoadNetwork():
 						
 							print(nid)
 							print(output_folder + "/"+tiles_name+"/img_%d.png" % nid)
+				
+						
+						
 				# else:
 				# 	v = self.annotation[nid]
 				# 	img_size = 16384
@@ -762,6 +764,9 @@ class SubRoadNetwork():
 
 				self.images[c,:,:,:] = self.image_augmentation(img, flag=augmentation) 
 				c = c + 1 
+
+				if c % 100 == 0 and self.nonIntersectionNodeNum> 512:
+					print(c)
 
 
 		#load targets and masks
@@ -1294,8 +1299,162 @@ class SubRoadNetwork():
 	
 		Image.fromarray(img).save(output)
 
+	def VisualizeResult(self, result, output = "default.png", size = 4096, imgname = "/sat_4096.png", scale = 1 ):
+		img = cv2.imread(self.config["folder"]+imgname)
+
+		for edge in self.parentRoadNetowrk.edges:
+			if edge[0] in self.subGraphNoadList and edge[1] in self.subGraphNoadList:
+				loc0 = self.parentRoadNetowrk.nid2loc[edge[0]]
+				loc1 = self.parentRoadNetowrk.nid2loc[edge[1]]
+
+				d = size
+
+				x0,y0 = get_image_coordinate(loc0[0], loc0[1], d, self.parentRoadNetowrk.region)
+				x1,y1 = get_image_coordinate(loc1[0], loc1[1], d, self.parentRoadNetowrk.region)
+
+				cv2.line(img, (y0,x0), (y1,x1), (128,255,255),2 * scale)
+				cv2.circle(img, (y0,x0), 4 * scale, (128,255,255), -1)
+				cv2.circle(img, (y1,x1), 4 * scale, (128,255,255), -1)
+
+
+		correct = 0 
+		correct1hop = 0 
+		inferred = 0 
+		total = 0 
+
+		for loc, items in self.parentRoadNetowrk.nodes.items():
+			nid = items[0]
+			if nid in self.node_mapping:
+				nid = self.node_mapping[nid]
+
+				if self.nonIntersectionNodeNum <= nid:
+					continue
+
+				x0,y0 = get_image_coordinate(loc[0], loc[1], size, self.parentRoadNetowrk.region)
+				
+				value = int(result[nid,1]*255) # from 0 to 1 
+
+				color = (0,value,1-value)
+
+				#cv2.circle(img, (y0,x0), 3, color, -1)
+
+				local_value = result[nid,1]
+
+				cc = 0
+				local_maxma = True 
+				for nei_node in self.parentRoadNetowrk.node_degree[items[0]]:
+					if nei_node in self.node_mapping:
+						nnid = self.node_mapping[nei_node]
+						v = result[nnid,1]
+
+						if v >= local_value:
+							local_maxma = False
+							break
+
+						cc += 1
+
+				if cc > 0 and local_maxma:
+					cv2.circle(img, (y0,x0), 4 * scale, (0,0,255), -1)
+
+					inferred += 1.0
+
+				if self.targets[nid,0] > 0.5:
+					cv2.circle(img, (y0,x0), 5 * scale , (255,0,0), 2* scale)
+
+					total += 1.0
+
+				if cc > 0 and local_maxma:
+					haslight = False
+
+					if self.targets[nid,0] > 0.5:
+						haslight = True 
+						correct += 1.0 
+						correct1hop += 1.0
+						cv2.circle(img, (y0,x0), 4 * scale, (0,255,0), -1)
+						
+					else:
+						for nei_node in self.parentRoadNetowrk.node_degree[items[0]]:
+							if nei_node in self.node_mapping:
+								nnid = self.node_mapping[nei_node]
+								if nnid < self.nonIntersectionNodeNum:
+									if self.targets[nnid,0] > 0.5:
+										haslight = True 
+										break 
+						if haslight:
+							cv2.circle(img, (y0,x0), 4, (0,128,0), -1)
+							correct1hop += 1.0
+
+		print("Result: exact  ",inferred, correct, total, "precision %.3f recall %.3f" % (correct/inferred, correct/total))
+		print("Result: one-hop",inferred, correct1hop, total, "precision %.3f recall %.3f" % (correct1hop/inferred, correct1hop/total))
+
+		cv2.imwrite(output, img)
+
+	def VisualizeResultLight(self, result, output = "default.png", size = 4096, imgname = "/sat_4096.png", scale = 1 ):
+		img = cv2.imread(self.config["folder"]+imgname)
+
+		for edge in self.parentRoadNetowrk.edges:
+			if edge[0] in self.subGraphNoadList and edge[1] in self.subGraphNoadList:
+				loc0 = self.parentRoadNetowrk.nid2loc[edge[0]]
+				loc1 = self.parentRoadNetowrk.nid2loc[edge[1]]
+
+				d = size
+
+				x0,y0 = get_image_coordinate(loc0[0], loc0[1], d, self.parentRoadNetowrk.region)
+				x1,y1 = get_image_coordinate(loc1[0], loc1[1], d, self.parentRoadNetowrk.region)
+
+				cv2.line(img, (y0,x0), (y1,x1), (128,255,255),2 * scale)
+				cv2.circle(img, (y0,x0), 4 * scale, (128,255,255), -1)
+				cv2.circle(img, (y1,x1), 4 * scale, (128,255,255), -1)
+
+
+		correct = 0 
+		correct1hop = 0 
+		inferred = 0 
+		total = 0 
+
+		min_v = 1.0 
+		max_v = 0.0 
+		for loc, items in self.parentRoadNetowrk.nodes.items():
+			nid = items[0]
+			if nid in self.node_mapping:
+				nid = self.node_mapping[nid]
+
+				if self.nonIntersectionNodeNum <= nid:
+					continue
+
+				x0,y0 = get_image_coordinate(loc[0], loc[1], size, self.parentRoadNetowrk.region)
+				
+				value = result[nid,1] # from 0 to 1 
+
+				if value>max_v:
+					max_v = value 
+				if value < min_v:
+					min_v = value 
+
+
+		print("min_v", min_v, "max_v", max_v)
+
+		for loc, items in self.parentRoadNetowrk.nodes.items():
+			nid = items[0]
+			if nid in self.node_mapping:
+				nid = self.node_mapping[nid]
+
+				if self.nonIntersectionNodeNum <= nid:
+					continue
+
+				x0,y0 = get_image_coordinate(loc[0], loc[1], size, self.parentRoadNetowrk.region)
+				
+				value = int((result[nid,1]-min_v)/(max_v-min_v)*255) # from 0 to 1 
+
+				color = (0,value,1-value)
+
+				cv2.circle(img, (y0,x0), 6, color, -1)
+
+		cv2.imwrite(output, img)
+		#Image.fromarray(img).save(output)
+
 	def GetGraphStructures(self):
-		return [self.tf_spares_graph_structure_fully_connected]
+		return [self.tf_spares_graph_structure]
 	
 
 

@@ -90,7 +90,7 @@ class RoadTaggerModel():
 
 	# simple2 11+3 layer 
 	def _buildCNN2(self, raw_inputs, dropout = None, feature_size=126, encoder_dropout = None, is_training = True,  batchnorm=False):
-		conv1, _, _ = common.create_conv_layer('cnn_l1', raw_inputs, 3, 16, kx = 5, ky = 5, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = batchnorm)
+		conv1, _, _ = common.create_conv_layer('cnn_l1', raw_inputs, 3, 16, kx = 5, ky = 5, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = False)
 		conv2, _, _ = common.create_conv_layer('cnn_l2', conv1, 16, 16, kx = 3, ky = 3, stride_x = 1, stride_y = 1,is_training = is_training, batchnorm = batchnorm)
 		conv3, _, _ = common.create_conv_layer('cnn_l3', conv2, 16, 32, kx = 3, ky = 3, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = batchnorm)
 		conv4, _, _ = common.create_conv_layer('cnn_l4', conv3, 32, 32, kx = 3, ky = 3, stride_x = 1, stride_y = 1,is_training = is_training, batchnorm = batchnorm)
@@ -103,7 +103,7 @@ class RoadTaggerModel():
 		conv9, _, _ = common.create_conv_layer('cnn_l9', conv8, 128, 128, kx = 3, ky = 3, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = batchnorm) # 12*12*128 
 		
 		conv10, _, _ = common.create_conv_layer('cnn_l10', conv9, 128, 128, kx = 3, ky = 3, stride_x = 1, stride_y = 1,is_training = is_training, batchnorm = batchnorm)
-		conv11, _, _ = common.create_conv_layer('cnn_l11', conv10, 128, 128, kx = 3, ky = 3, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = batchnorm) # 6*6*128 
+		conv11, _, _ = common.create_conv_layer('cnn_l11', conv10, 128, 128, kx = 3, ky = 3, stride_x = 2, stride_y = 2,is_training = is_training, batchnorm = False) # 6*6*128 
 				 
 		dense0 = tf.reshape(conv11,[-1, 6*6*128])
 
@@ -316,7 +316,7 @@ class RoadTaggerModel():
 			
 
 			if self.GRU==True:
-				print("use gru")
+				#print("use gru")
 				x_ = common.create_gcn_layer_GRU('gcn_loop', x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 
 			else:
@@ -360,7 +360,7 @@ class RoadTaggerModel():
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
 			if self.GRU==True:
-				print("use gru")
+				#print("use gru")
 				x_ = common.create_gcn_layer_GRU_one_more_fc('gcn_loop', x_, self.graph_structure_fully_connected, 128, 128, activation = tf.nn.tanh)
 
 			else:
@@ -400,7 +400,7 @@ class RoadTaggerModel():
 
 
 		for i in range(loop):
-			print("use gru generic")
+			#print("use gru generic")
 			x_gnn = common.create_gcn_layer_GRU_generic_one_fc('gcn_loop', x_gnn, graphs, 128, 128, activation = tf.nn.tanh)
 
 
@@ -437,7 +437,7 @@ class RoadTaggerModel():
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
 			if self.GRU==True:
-				print("use gru")
+				#print("use gru")
 				x_ = common.create_gcn_layer_GRU_bidirectional_one_fc('gcn_loop', x_, self.graph_structure_decomposed_dir1, self.graph_structure_decomposed_dir2, 128, 128, activation = tf.nn.tanh)
 
 			else:
@@ -477,7 +477,7 @@ class RoadTaggerModel():
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
 			if self.GRU==True:
-				print("use gru")
+				#print("use gru")
 				x_ = common.create_gcn_layer_GRU_one_more_fc('gcn_loop', x_, self.graph_structure_fully_connected, 128, 128, activation = tf.nn.tanh)
 
 			else:
@@ -498,7 +498,7 @@ class RoadTaggerModel():
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
 			if self.GRU==True:
-				print("use gru")
+				#print("use gru")
 				x__ = common.create_gcn_layer_GRU_bidirectional_one_fc('gcn_loop2', x__, self.graph_structure_decomposed_dir1, self.graph_structure_decomposed_dir2, 128, 128, activation = tf.nn.tanh)
 
 			else:
@@ -724,7 +724,6 @@ class RoadTaggerModel():
 
 		self.merged_summary = tf.summary.merge_all()
 
-	
 		pass
 
 
@@ -818,7 +817,7 @@ class RoadTaggerModel():
 			feed_dict[self.graph_structures[i]] = graph 
 			i = i + 1
 
-		return self.sess.run([self.loss, self._output_lane_number, self._output_left_park, self._output_left_bike, self._output_right_bike, self._output_right_park, self._output_roadtype, self._output_unstacks_reshape, self.homogeneous_loss], feed_dict = feed_dict)
+		return self.sess.run([self.loss, self.softmax_output_concat], feed_dict = feed_dict)
 
 
 	def saveModel(self, path):
@@ -826,8 +825,6 @@ class RoadTaggerModel():
 
 	def saveModelBest(self, saver, path):
 		saver.save(self.sess, path)
-
-
 
 	def restoreModel(self, path):
 		self.saver.restore(self.sess, path)
