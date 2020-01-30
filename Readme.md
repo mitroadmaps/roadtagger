@@ -24,6 +24,16 @@ This repository consists of the source code of the [paper](https://arxiv.org/abs
 
 **IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially be more efficient than just trying to make the code in this repo run. :-) 
 
+### Change Log 
+
+**2020-01-30**
+--------------------
+- The [generic version](https://github.com/mitroadmaps/roadtagger/tree/master/generic_version) is working now (as an example).
+- Add example graph loader, [roadtagger_generic_graph_loader.py](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/roadtagger_generic_graph_loader.py)
+- Add example training code, [roadtagger_generic_train.py](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/roadtagger_generic_train.py)
+- Add example evaluation code, [roadtagger_generic_eval.py](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/roadtagger_generic_eval.py)
+- Add example config file, [lightpoles_example.json](https://github.com/mitroadmaps/roadtagger/blob/master/generic_version/configs/lightpoles_example.json)
+- Fixed bugs in the [pre-alpha clean version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version). 
 
 ### Download the Dataset
 
