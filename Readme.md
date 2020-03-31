@@ -6,14 +6,6 @@ RoadTagger Paper: https://arxiv.org/abs/1912.12408
 
 Inferring road attributes such as lane count and road type from satellite imagery is challenging. Often, due to the occlusion in satellite imagery and the spatial correlation of road attributes, a road attribute at one position on a road may only be apparent when considering far-away segments of the road. Thus, to robustly infer road attributes, the model must integrate scattered information and capture the spatial correlation of features along roads. Existing solutions that rely on image classifiers fail to capture this correlation, resulting in poor accuracy. We find this failure is caused by a fundamental limitation -- the limited effective receptive field of image classifiers. To overcome this limitation, we propose RoadTagger, an end-to-end architecture which combines both Convolutional Neural Networks (CNNs) and Graph Neural Networks (GNNs) to infer road attributes. The usage of graph neural networks allows information propagation on the road network graph and eliminates the receptive field limitation of image classifiers. We evaluate RoadTagger on both a large real-world dataset covering 688 km^2 area in 20 U.S. cities and a synthesized micro-dataset. In the evaluation, RoadTagger improves inference accuracy over the CNN image classifier based approaches. RoadTagger also demonstrates strong robustness against different disruptions in the satellite imagery and the ability to learn complicated inductive rules for aggregating scattered information along the road network.
 
-**Results on Real-world Imagery**
-
-![fig1](https://github.com/mitroadmaps/roadtagger/blob/master/figure/real.png "Results on Real-world Imagery")
-
-**Results on Synthesized Imagery**
-
-![fig2](https://github.com/mitroadmaps/roadtagger/blob/master/figure/synthesised.png "Results on Synthesized Imagery")
-
 
 # About this Repository 
 
@@ -21,9 +13,15 @@ This repository consists of the source code of the [paper](https://arxiv.org/abs
 
 **IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially save your time. :-) 
 
+If you just want to play with the pretrained model and reproduce the numbers in the paper, you can checkout the instruction [here](#model).
 
 
 ## Change Log 
+**2020-03-31**
+--------------------
+- Add download link for the pretrained model.
+- Add download link for the testing dataset.
+- Update the evaluation [instruction](#model). Now, you can reproduce the numbers in the paper with the pretrained model and the testing dataset.
 
 **2020-01-30**
 --------------------
@@ -116,6 +114,66 @@ time python roadtagger_evaluate.py \
 -r path_to_model
 ```
 
+### <a name="model"></a> Use Pre-trained Model and Reproduce the Numbers in the Paper
+Go to the pre_alpha_clean_version folder.
+```
+cd pre_alpha_clean_version
+```
+
+Download the pretrained model (268M) and the testing dataset (3.8G). 
+```
+./download.sh 
+```
+
+After downloading, there will be two folders, 'model' and 'dataset', and one file 'validation.p' under the 'pre_alpha_clean_version' folder.
+
+Then, you can use the following commands to evaluate the pretrined model on the testing dataset. The following commands print the results to the stdout (no post-processing, with MRF post-processing, and with Smoothing post-processing) and dump all detailed results into the 'output' folder. 
+
+If you got run-out-of memory error, try to reduce the batch size of the CNN evaluation through adding the '-cnnBatchSize X' flag to the following commands (The default batch size is 256).
+
+
+Boston (RoadType: 0.925, LaneCount: 0.815),  
+```
+time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `pwd`/ --cnn_model simple2 --gnn_model RBDplusRawplusAux --use_batchnorm true -o output/boston -config dataset/boston_auto/region_0_1/config.json -r model/model_best
+
+```
+
+Chicago (RoadType: 0.937, LaneCount: 0.807),
+```
+time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `pwd`/ --cnn_model simple2 --gnn_model RBDplusRawplusAux --use_batchnorm true -o output/chicago -config dataset/chicago_auto/region_0_1/config.json -r model/model_best
+
+```
+
+DC (RoadType: 0.900, LaneCount: 0.675),
+```
+time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `pwd`/ --cnn_model simple2 --gnn_model RBDplusRawplusAux --use_batchnorm true -o output/dc -config dataset/dc_auto/region_0_1/config.json -r model/model_best
+
+```
+
+Seattle (RoadType: 0.961, LaneCount: 0.791),
+```
+time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `pwd`/ --cnn_model simple2 --gnn_model RBDplusRawplusAux --use_batchnorm true -o output/seattle -config dataset/seattle_auto/region_0_1/config.json -r model/model_best
+
+```
+
+
+
+
+
+
+
+
+
+
+# RoadTagger Results
+
+**Results on Real-world Imagery**
+
+![fig1](https://github.com/mitroadmaps/roadtagger/blob/master/figure/real.png "Results on Real-world Imagery")
+
+**Results on Synthesized Imagery**
+
+![fig2](https://github.com/mitroadmaps/roadtagger/blob/master/figure/synthesised.png "Results on Synthesized Imagery")
 
 
 

@@ -37,6 +37,9 @@ parser.add_argument('-run', action='store', dest='run_name', type=str,
 parser.add_argument('-lr', action='store', dest='learning_rate', type=float,
                     help='initial learning_rate', default=0.0001)
 
+parser.add_argument('-cnnBatchSize', action='store', dest='cnnBatchSize', type=int,
+                    help='CNN Batch Size', default=256)
+
 
 parser.add_argument('--noLeftRight', action='store', dest='noLeftRight', type=bool,
                     help='noLeftRight flag', default=True)
@@ -251,7 +254,7 @@ if __name__ == "__main__":
 		else:
 			print("load model failed, nan encountered!!! try reloading the model!!!!! ")
 
-		batch_size = 256 # you may reduce this batch size if there is out-of-memory error. 
+		batch_size = args.cnnBatchSize # you may reduce this batch size if there is out-of-memory error. 
 
 		st = 0
 
