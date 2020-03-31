@@ -71,10 +71,10 @@ Step-2:
 Add the manual annotation.
 
 ```
-cp annotation boston_region_0_1_annotation.p dataset/boston_auto/region_0_1/annotation.p
-cp annotation chicago_region_0_1_annotation.p dataset/chicago_auto/region_0_1/annotation.p
-cp annotation dc_region_0_1_annotation.p dataset/dc_auto/region_0_1/annotation.p
-cp annotation seattle_region_0_1_annotation.p dataset/seattle_auto/region_0_1/annotation.p
+cp annotation/boston_region_0_1_annotation.p dataset/boston_auto/region_0_1/annotation.p
+cp annotation/chicago_region_0_1_annotation.p dataset/chicago_auto/region_0_1/annotation.p
+cp annotation/dc_region_0_1_annotation.p dataset/dc_auto/region_0_1/annotation.p
+cp annotation/seattle_region_0_1_annotation.p dataset/seattle_auto/region_0_1/annotation.p
 ```
 
 ### Train RoadTagger Model

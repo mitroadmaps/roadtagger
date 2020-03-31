@@ -104,7 +104,10 @@ if __name__ == "__main__":
 	roadNetwork.loadAnnotation(args.config, osm_auto=True, root_folder=dataset_folder)
 	
 	if args.tiles_name == "tiles":
-		roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
+		try:
+			roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_4096.png"))
+		except:
+			roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
 	else:
 		roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
 
@@ -248,7 +251,7 @@ if __name__ == "__main__":
 		else:
 			print("load model failed, nan encountered!!! try reloading the model!!!!! ")
 
-		batch_size = 256 
+		batch_size = 256 # you may reduce this batch size if there is out-of-memory error. 
 
 		st = 0
 
