@@ -105,7 +105,7 @@ if __name__ == "__main__":
 	
 	if args.tiles_name == "tiles":
 		try:
-			roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_4096.png"))
+			roadNetwork.sat_image = scipy.ndimage.imread(output_folder+"/sat_4096.png")
 		except:
 			roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
 	else:
