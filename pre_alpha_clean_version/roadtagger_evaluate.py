@@ -3,6 +3,8 @@ import argparse
 from roadtagger_model import * 
 from roadtagger_road_network import * 
 
+import roadtagger_road_network as RoadNetwork 
+
 import pickle
 from subprocess import Popen
 import sys
