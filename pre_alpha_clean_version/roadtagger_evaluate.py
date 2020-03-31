@@ -281,7 +281,7 @@ if __name__ == "__main__":
 		outputs = model.EvaluateWithIntermediateNodeFeature(input_region, node_feature)
 		time_gnn = time() - t0 
 
-		rec_result = osm_input_region.RecommendationAccNode(outputs, input_region, validation_set=validation_set)
+		rec_result = None #= osm_input_region.RecommendationAccNode(outputs, input_region, validation_set=validation_set)
 
 
 		input_region.validation_set = validation_set
@@ -295,6 +295,8 @@ if __name__ == "__main__":
 
 		pickle.dump(outputs, open(result_output+"output.p", "w"))
 
+		print("##############################################")
+		print("Post-Processing: None")
 		result1 = input_region.GetAccuracyStatistic(outputs, dump=True, validation_set = validation_set)
 
 		
@@ -308,6 +310,8 @@ if __name__ == "__main__":
 		input_region.VisualizeOutputRoadType(outputs,result_output+"wholeregion_output_roadtype_mrf.png")
 		input_region.VisualizeOutputLane(outputs,result_output+"wholeregion_output_lane_mrf.png")
 		
+		print("##############################################")
+		print("Post-Processing: MRF")
 		result2 = input_region.GetAccuracyStatistic(outputs, dump=True, validation_set = validation_set)
 
 
@@ -315,8 +319,10 @@ if __name__ == "__main__":
 
 		outputs_smooth = input_region.SegmentSmoothSlidingWindow(outputs)
 
-		input_region.VisualizeOutputLane(outputs_smooth, result_output+"wholeregion_output_micro_lane_smooth.png")
+		input_region.VisualizeOutputLane(outputs_smooth, result_output+"wholeregion_output_lane_smooth.png")
 		
+		print("##############################################")
+		print("Post-Processing: Smoothing with Sliding Window")
 		result3 = input_region.GetAccuracyStatistic(outputs_smooth, dump=True, validation_set = validation_set)
 
 		json.dump( [result1, result2, result3, rec_result], open(result_output+"result.json", "w"), indent=4)

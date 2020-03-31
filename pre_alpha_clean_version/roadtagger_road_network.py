@@ -1711,12 +1711,12 @@ class SubRoadNetwork():
 			update_binary_classifier_counter(roadtype_counter, output, self.targets[i][5])
 
 		acc_roadtype = print_binary_classifier_counter(roadtype_counter, "roadtype", dump=dump)
-		acc_l_parking = print_binary_classifier_counter(counter_group[0], "left_parking ",dump=dump)
+		acc_l_parking = print_binary_classifier_counter(counter_group[0], "left_parking ",dump=False)
 		if self.noLeftRight == False:
-			acc_r_parking = print_binary_classifier_counter(counter_group[3], "right_parking",dump=dump)
-		acc_l_biking = print_binary_classifier_counter(counter_group[1], "left_biking  ",dump=dump)
+			acc_r_parking = print_binary_classifier_counter(counter_group[3], "right_parking",dump=False)
+		acc_l_biking = print_binary_classifier_counter(counter_group[1], "left_biking  ",dump=False)
 		if self.noLeftRight == False:
-			acc_r_biking = print_binary_classifier_counter(counter_group[2], "right_biking ",dump=dump)
+			acc_r_biking = print_binary_classifier_counter(counter_group[2], "right_biking ",dump=False)
 
 		if dump :
 			for i in xrange(6):
