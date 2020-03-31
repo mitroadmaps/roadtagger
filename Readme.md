@@ -19,9 +19,9 @@ If you just want to play with the pretrained model and reproduce the numbers in 
 ## Change Log 
 **2020-03-31**
 --------------------
-- Add download link for the pretrained model.
-- Add download link for the testing dataset.
-- Update the evaluation [instruction](#model). Now, you can reproduce the numbers in the paper with the pretrained model and the testing dataset.
+- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/model.zip) for the pretrained model.
+- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/dataset_testing.zip) for the testing dataset and [link](https://mapster.csail.mit.edu/data/roadtagger/validation.p) for dataset partition.
+- Add reproduce [instruction](#model). Now, you can reproduce the numbers in the paper with the pretrained model and the testing dataset.
 
 **2020-01-30**
 --------------------
@@ -120,14 +120,14 @@ Go to the pre_alpha_clean_version folder.
 cd pre_alpha_clean_version
 ```
 
-Download the pretrained model (268M) and the testing dataset (3.8G). 
+Download the pretrained model (268M (unzip) /183M (zip)) and the testing dataset (3.8G). 
 ```
 ./download.sh 
 ```
 
 After downloading, there will be two folders, 'model' and 'dataset', and one file 'validation.p' under the 'pre_alpha_clean_version' folder.
 
-Then, you can use the following commands to evaluate the pretrined model on the testing dataset. The following commands print the results to the stdout (no post-processing, with MRF post-processing, and with Smoothing post-processing) and dump all detailed results into the 'output' folder. 
+Then, you can use the following commands to evaluate the pretrined model on the testing dataset. The following commands print the results to the stdout (without post-processing, with MRF post-processing, and with smoothing post-processing) and dump all detailed results into the 'output' folder. 
 
 If you got run-out-of memory error, try to reduce the batch size of the CNN evaluation through adding the '-cnnBatchSize X' flag to the following commands (The default batch size is 256).
 
@@ -155,10 +155,6 @@ Seattle (RoadType: 0.961, LaneCount: 0.791),
 time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `pwd`/ --cnn_model simple2 --gnn_model RBDplusRawplusAux --use_batchnorm true -o output/seattle -config dataset/seattle_auto/region_0_1/config.json -r model/model_best
 
 ```
-
-
-
-
 
 
 
