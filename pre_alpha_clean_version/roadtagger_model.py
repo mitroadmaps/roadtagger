@@ -13,7 +13,7 @@ import math
 import svgwrite
 from svgwrite.image import Image as svgimage
 from PIL import Image
-import resnet 
+#import resnet 
 image_size = 384 
 
 
