@@ -13,7 +13,7 @@ This repository consists of the source code of the [paper](https://arxiv.org/abs
 
 **IMPORTANT** As this is not yet a stable version, the code in the [pre_alpha_clean_version](https://github.com/mitroadmaps/roadtagger/tree/master/pre_alpha_clean_version) folder may only be used as reference - setting up your own data processing/training/evaluation code followed by the description in the [paper](https://arxiv.org/abs/1912.12408) and borrowing some code snippets from this repo would potentially save your time. :-) 
 
-If you just want to play with the pretrained model and reproduce the numbers in the paper, you can checkout the instruction [here](#model).
+If you just want to play with the pretrained model and reproduce the numbers in the paper, you can checkout the instruction [here](#model). The code for reproduce has been tested. 
 
 
 ## Change Log 
