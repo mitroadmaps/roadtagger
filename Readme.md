@@ -17,6 +17,9 @@ If you just want to play with the pretrained model and reproduce the numbers in 
 
 
 ## Change Log 
+**2020-07-23**
+- Fix bugs in the instruction for the pre-alpha clean version. Should use roadtagger_create_dataset_script.py to download and preprocess the dataset rather than roadtagger_generate_dataset.py . 
+
 **2020-03-31**
 --------------------
 - Add download [link](https://mapster.csail.mit.edu/data/roadtagger/model.zip) for the pretrained model.
@@ -48,19 +51,23 @@ Step-1:
 
 In 'pre_alpha_clean_version' folder, 
 
-**Edit line 47 in helper_mapdriver.py. Enter your Google API Key there.**
+**Edit line 43 in helper_mapdriver.py. Enter your Google API Key there.** You have to use your [Google Maps Static API key](https://developers.google.com/maps/documentation/maps-static/overview) to download the dataset. 
 
 ```
-python roadtagger_generate_dataset.py config/dataset_180tiles.json 
+python roadtagger_create_dataset_script.py config/dataset_180tiles.json 
 ```
 
-This script will download the dataset with 20 cities into the 'dataset' folder. 
+This script will download the dataset with 20 cities into the 'dataset' folder. The dataset is very large. You may need at least **250GB** free space to download the dataset. 
 
-**BEFORE** running this script, it would be highly recommended to try the sample dataset first to make sure there is no runtime issues.
+Downloading the images from Google is not free. But there is a free $200 monthly credit which is enough to cover this dataset.
+
+
+**BEFORE** running this script, it would be highly recommended to try the sample dataset first to make sure there is no runtime issues. (2GB space needed)
 
 ```
-python roadtagger_generate_dataset.py config/dataset_sample.json 
+python roadtagger_create_dataset_script.py config/dataset_sample.json 
 ```
+
 The code automatically download OpenStreetMap data into the 'tmp' folder. Because the OpenStreetMap is changing all the time, we put the snapshots of four regions in the 'tmp' folder. The manual annotation in Step-2 **ONLY** matches these snapshots. 
 
 
