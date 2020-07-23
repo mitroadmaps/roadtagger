@@ -17,7 +17,9 @@ If you just want to play with the pretrained model and reproduce the numbers in 
 
 
 ## Change Log 
+
 **2020-07-23**
+--------------------
 - Fix bugs in the instruction for the pre-alpha clean version. Should use roadtagger_create_dataset_script.py to download and preprocess the dataset rather than roadtagger_generate_dataset.py . 
 
 **2020-03-31**
