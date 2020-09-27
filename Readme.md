@@ -188,3 +188,4 @@ time python roadtagger_evaluate.py -model_config simpleCNN+GNNGRU_8_0_1_1  -d `p
 
 
 
+
