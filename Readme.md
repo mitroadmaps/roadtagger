@@ -24,9 +24,9 @@ If you just want to play with the pretrained model and reproduce the numbers in 
 
 **2020-03-31**
 --------------------
-- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/model.zip) for the pretrained model.
-- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/dataset_testing.zip) for the testing dataset and [link](https://mapster.csail.mit.edu/data/roadtagger/validation.p) for dataset partition.
-- Add reproduce [instruction](#model). Now, you can reproduce the numbers in the paper with the pretrained model and the testing dataset.
+- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/model.zip) to the pretrained model.
+- Add download [link](https://mapster.csail.mit.edu/data/roadtagger/dataset_testing.zip) to the testing dataset and [link](https://mapster.csail.mit.edu/data/roadtagger/validation.p) to the dataset partition.
+- Add reproduction [instruction](#model). Now, you can reproduce the numbers in the paper with the pretrained model and the testing dataset.
 
 **2020-01-30**
 --------------------
