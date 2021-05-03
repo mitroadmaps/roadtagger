@@ -1,0 +1,1 @@
+docker build -f Dockerfile.cpu -t songtaohe/roadtagger_inference_server_cpu .

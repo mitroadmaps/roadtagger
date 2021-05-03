@@ -1,0 +1,1 @@
+docker run -p8010:8000 -p8011:8001 -it --rm songtaohe/roadtagger_inference_server_cpu:latest
