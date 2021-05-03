@@ -17,6 +17,10 @@ If you just want to play with the pretrained model and reproduce the numbers in 
 
 
 ## Change Log 
+**2021-05-03**
+--------------------
+- Add RoadTagger docker container support. Check it out [here](docker/)!
+- You can use this docker container to reproduce the numbers in the paper and run inference on custom images with the pre-trained model.  
 
 **2020-07-23**
 --------------------
