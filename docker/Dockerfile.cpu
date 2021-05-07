@@ -1,0 +1,20 @@
+FROM tensorflow/tensorflow:1.15.0
+WORKDIR /usr/src/app
+RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y python-opengm \
+python-opencv \
+&& rm -rf /var/lib/apt/lists/*
+RUN python -m pip install --user requests
+RUN python -m pip install --user scipy
+RUN python -m pip install --user Pillow
+RUN apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get install -y libspatialindex-dev wget && rm -rf /var/lib/apt/lists/*
+RUN python -m pip install --user Rtree
+RUN python -m pip install --user scikit-image
+RUN python -m pip install --user tflearn==0.3.2
+RUN python -m pip install --user svgwrite
+RUN python -m pip install --user bintrees
+RUN python -m pip install --user hopcroftkarp
+COPY app ./
+EXPOSE 8000
+EXPOSE 8001
+CMD ["cd", "app"]
+CMD ["python", "start.py"]
