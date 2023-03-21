@@ -7,6 +7,7 @@ import math
 import time
 import os.path
 import scipy.ndimage
+import matplotlib.pyplot
 import scipy.misc
 import pickle, socket
 from PIL import Image
@@ -40,10 +41,10 @@ def metersToLonLat(mx, my):
 
 def DownloadMap(lat,lon, zoom, outputname):
 
-    GOOGLE_MAP_API_KEY = "YOUR API KEY"
+    GOOGLE_MAP_API_KEY = "AIzaSyAWjI9lURqCJBc28r3pP4ktT8PJ9PigsMI"
 
     filename = "staticmap?center="+("%.6f" % lat)+","+("%.6f" % lon)+"&maptype=satellite&zoom="+str(zoom)+"&scale=2&style=element:labels|visibility:off&size=640x640&key=" + GOOGLE_MAP_API_KEY
-    filename_shell = "staticmap?center="+("%.6f" % lat)+","+("%.6f" % lon)+"&maptype=satellite&zoom="+str(zoom)+"&scale=2&style=element:labels%7Cvisibility:off&size=640x640&key=" + GOOGLE_MAP_API_KEY
+    filename_shell = "staticmap?center="+("%.6f" % lat)+","+("%.6f" % lon)+"&maptype=satellite&zoom="+str(zoom)+"&scale=2&style=element:labels|visibility:off&size=640x640&key=" + GOOGLE_MAP_API_KEY
     
     #print(filename)
 
@@ -115,8 +116,8 @@ def GetMapAroundALoc(lat,lon, rangeInMeter, heading, folder = "googlemap/", star
 
     ok = True
 
-    for i in xrange(ilat_min, ilat_max+1):
-        for j in xrange(ilon_min, ilon_max+1):
+    for i in range(ilat_min, ilat_max+1):
+        for j in range(ilon_min, ilon_max+1):
             filename = folder + "sat_"+str(j)+"_"+str(i)+".png"
             Succ = os.path.isfile(filename) 
 
@@ -125,7 +126,7 @@ def GetMapAroundALoc(lat,lon, rangeInMeter, heading, folder = "googlemap/", star
 
 
             if Succ :
-                subimg = scipy.ndimage.imread(filename).astype(np.uint8)
+                subimg = matplotlib.pyplot.imread(filename).astype(np.uint8)
 
                 result_image[(ilat_max - i)*resolution:(ilat_max - i + 1)*resolution,(j-ilon_min)*resolution:(j+1 -ilon_min)*resolution] = subimg[padding:resolution+padding, padding:resolution+padding]
 
@@ -234,7 +235,7 @@ def GetMapInRect(min_lat,min_lon, max_lat, max_lon , folder = "googlemap/", star
 
     print(lat_n, lon_n)
 
-    result_image = np.zeros((lat_n * resolution / scale, lon_n * resolution / scale, 3), dtype=np.uint8)
+    result_image = np.zeros((int(lat_n * resolution / scale), int(lon_n * resolution / scale), 3), dtype=np.uint8)
 
     max_lat_ind = int((1.0 - (min_lat - (ilat_min * angle_per_image_lat + start_lat))/(lat_n*angle_per_image_lat))* resolution * lat_n / scale)
     min_lon_ind = int((min_lon - (ilon_min * angle_per_image_lon + start_lon))/(lon_n*angle_per_image_lon) * resolution * lon_n / scale)
@@ -247,8 +248,8 @@ def GetMapInRect(min_lat,min_lon, max_lat, max_lon , folder = "googlemap/", star
 
     ok = True
 
-    for i in xrange(ilat_min, ilat_max+1):
-        for j in xrange(ilon_min, ilon_max+1):
+    for i in range(ilat_min, ilat_max+1):
+        for j in range(ilon_min, ilon_max+1):
 
             filename = folder + "sat_"+str(j)+"_"+str(i)+".png"
             #print(filename)
@@ -262,7 +263,7 @@ def GetMapInRect(min_lat,min_lon, max_lat, max_lon , folder = "googlemap/", star
 
             if Succ == True:
                 try:
-                    subimg = scipy.ndimage.imread(filename).astype(np.uint8)
+                    subimg = matplotlib.pyplot.imread(filename).astype(np.uint8)
                 except:
                     print("image file is damaged, try to redownload it", filename)
                     Succ = False
@@ -276,7 +277,7 @@ def GetMapInRect(min_lat,min_lon, max_lat, max_lon , folder = "googlemap/", star
                 if filename in img_cache.keys():
                     subimg = img_cache[filename]
                 else:
-                    subimg = scipy.ndimage.imread(filename).astype(np.uint8)
+                    subimg = matplotlib.pyplot.imread(filename).astype(np.uint8)
                     img_cache[filename] = subimg
 
                 if np.shape(subimg)[2] ==4:

@@ -11,6 +11,10 @@ import json
 import os 
 import threading
 
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+import matplotlib
 from PIL import Image 
 
 
@@ -151,7 +155,7 @@ if __name__ == "__main__":
 	suffix += "_cnntype_" + args.cnn_model +"_"
 
 
-	print(args.dataset, "dataset", dataset_cfg)
+	print(args.dataset, "dataset")
 
 	if args.train_cnn_only == True:
 		model_folder = args.save_folder + model_config + suffix + "cnnonly_"+ args.cnn_model
@@ -268,9 +272,9 @@ if __name__ == "__main__":
 		city_name = city["cityname"]
 		print(dataset_folder + city_name)
 
-		for i in xrange(nlat):
-			for j in xrange(nlon):
-				if i == 0 and j == 1 and city_name in ['dataset/boston_auto','dataset/chicago_auto','dataset/dc_auto','dataset/seattle_auto']:
+		for i in range(nlat):
+			for j in range(nlon):
+				if i == 0 and j == 1 and city_name in ['dataset/chicago_auto','dataset/dc_auto','dataset/seattle_auto']:
 					validation_configs.append(dataset_folder+"%s/region_%d_%d/config.json" % (city_name,i,j))
 				else:
 					training_configs.append(dataset_folder+"%s/region_%d_%d/config.json" % (city_name,i,j))
@@ -299,7 +303,7 @@ if __name__ == "__main__":
 
 
 
-	with tf.Session(config=tf.ConfigProto()) as sess:
+	with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto()) as sess:
 		model = DeepRoadMetaInfoModel(sess, cnn_type, gnn_type,lane_number_weight = lane_weight, roadtype_weight = type_weight, parking_weight = 0.0, biking_weight = biking_weight, number_of_gnn_layer = number_of_gnn_layer, GRU=GRU, noLeftRight =noLeftRight, use_batchnorm = args.use_batchnorm, homogeneous_loss_factor = args.homogeneous_loss_factor)
 
 		if args.model_recover is not None:
@@ -313,15 +317,16 @@ if __name__ == "__main__":
 			print(config_file)
 			config = json.load(open(config_file,"r"))
 			output_folder = config["folder"]
-			roadNetwork =  pickle.load(open(dataset_folder+output_folder+"/roadnetwork.p", "r"))
+			roadNetwork =  pickle.load(open(dataset_folder+output_folder+"/roadnetwork.p", "rb"))
 
 			lane_numbers,_ = roadNetwork.loadAnnotation(config_file, osm_auto=True, lane_numbers=lane_numbers, root_folder = dataset_folder)
 			
-			# if os.path.isfile(dataset_folder+output_folder+"/sat_4096.png"):
-			# 	roadNetwork.sat_image = scipy.ndimage.imread(dataset_folder+output_folder+"/sat_4096.png").astype(np.uint8)
-			# else:
-			# 	roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(dataset_folder+output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
-			# 	Image.fromarray(roadNetwork.sat_image).save(dataset_folder+output_folder+"/sat_4096.png")
+			if os.path.isfile(dataset_folder+output_folder+"/sat_4096.png"):
+                                roadNetwork.sat_image = matplotlib.pyplot.imread(dataset_folder+output_folder+"/sat_4096.png").astype(np.uint8)
+			else:
+                                print(dataset_folder+output_folder+"/sat_16384.png")
+                                roadNetwork.sat_image = Image.fromarray(matplotlib.pyplot.imread(dataset_folder+output_folder+"/sat_16384.png").astype(np.uint8)).resize((4096, 4096))
+                                (roadNetwork.sat_image).save(dataset_folder+output_folder+"/sat_4096.png")
 
 			training_networks.append(roadNetwork)
 
@@ -329,15 +334,17 @@ if __name__ == "__main__":
 			print(config_file)
 			config = json.load(open(config_file,"r"))
 			output_folder = config["folder"]
-			roadNetwork =  pickle.load(open(dataset_folder+output_folder+"/roadnetwork.p", "r"))
+			roadNetwork =  pickle.load(open(dataset_folder+output_folder+"/roadnetwork.p", "rb"))
 
 			lane_numbers,_ = roadNetwork.loadAnnotation(config_file, osm_auto=True, lane_numbers=lane_numbers, root_folder = dataset_folder)
 			
-			# if os.path.isfile(dataset_folder+output_folder+"/sat_4096.png"):
-			# 	roadNetwork.sat_image = scipy.ndimage.imread(dataset_folder+output_folder+"/sat_4096.png").astype(np.uint8)
-			# else:
-			# 	roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(dataset_folder+output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
-			# 	Image.fromarray(roadNetwork.sat_image).save(dataset_folder+output_folder+"/sat_4096.png")
+			if os.path.isfile(dataset_folder+output_folder+"/sat_4096.png"):
+			 	#roadNetwork.sat_image = scipy.ndimage.imread(dataset_folder+output_folder+"/sat_4096.png").astype(np.uint8)
+			 	roadNetwork.sat_image = matplotlib.pyplot.imread(dataset_folder+output_folder+"/sat_4096.png").astype(np.uint8)
+			else:
+			 	#roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(dataset_folder+output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
+                                roadNetwork.sat_image = Image.fromarray(matplotlib.pyplot.imread(dataset_folder+output_folder+"/sat_16384.png").astype(np.uint8)).resize((4096, 4096))
+                                roadNetwork.sat_image.save(dataset_folder+output_folder+"/sat_4096.png")
 
 			# this is not a bug, use training_networks here and pop later.
 			training_networks.append(roadNetwork)
@@ -369,10 +376,10 @@ if __name__ == "__main__":
 
 		validation_set = {}
 
-		for city_name in ['seattle','dc','chicago','boston']:
+		for city_name in ['dc','chicago','boston']:
+	#	for city_name in ['boston']:
 			validation_node_list = []
 
-		#for city_name in ['boston']:
 			testing_network[city_name] = training_networks.pop()  # region_0_1  in Boston
 
 			testing_data[city_name] = []
@@ -401,7 +408,7 @@ if __name__ == "__main__":
 			testing_data_all += testing_data[city_name]
 
 
-		pickle.dump(validation_set, open("validation.p","w"))
+		pickle.dump(validation_set, open("validation.p","wb"))
 
 
 		writer = tf.summary.FileWriter(log_folder+"/"+run, sess.graph)
@@ -483,7 +490,7 @@ if __name__ == "__main__":
 
 			td = [[] for x in range(p_num)]
 
-			procs = [threading.Thread(target = loadTrainingDataAsyncBlock, args = [td[i], i*(sampleNum/p_num), (i+1)*(sampleNum/p_num)]) for i in range(p_num)]
+			procs = [threading.Thread(target = loadTrainingDataAsyncBlock, args = [td[i], int(i*(sampleNum/p_num)), int((i+1)*(sampleNum/p_num))]) for i in range(p_num)]
 
 			for i in range(p_num):
 				procs[i].start()

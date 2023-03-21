@@ -1,7 +1,7 @@
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import tflearn
-from tensorflow.contrib.layers.python.layers import batch_norm
 
 
 def uniform(shape, scale=0.05, name=None):
@@ -47,7 +47,7 @@ def dot(x, y, sparse=False):
 
 def create_conv_layer(name, input_tensor, in_channels, out_channels, is_training = True, activation='relu', kx = 3, ky = 3, stride_x = 2, stride_y = 2, batchnorm=False, padding='VALID', add=None, deconv = False):
 	if deconv == False:
-		input_tensor = tf.pad(input_tensor, [[0, 0], [kx/2, kx/2], [kx/2, kx/2], [0, 0]], mode="CONSTANT")
+		input_tensor = tf.pad(input_tensor, [[0, 0], [int(kx/2), int(kx/2)], [int(kx/2), int(kx/2)], [0, 0]], mode="CONSTANT")
 
 
 	weights = tf.get_variable(name+'weights', shape=[kx, ky, in_channels, out_channels],
@@ -86,7 +86,7 @@ def create_conv_layer(name, input_tensor, in_channels, out_channels, is_training
 
 	if batchnorm:
 		print("use batchnorm ", name)
-		n = batch_norm(s, decay = 0.95, center=True, scale=True, updates_collections=None, is_training=is_training)
+		n = tf.compat.v1.layers.batch_normalization(s, momentum = 0.95, center=True, scale=True, training=is_training)
 	else:
 		n = s 
 
@@ -151,7 +151,7 @@ def create_gcn_layer_GRU_generic_one_fc(name, input_tensor, graph_structures, in
 		tensor_list = []
 
 
-		for i in xrange(graph_num):
+		for i in range(graph_num):
 			weights.append(glorot([input_dim, input_dim], name='weights_fc'+str(i)))
 			bias.append(zeros([input_dim], name = 'bias'+str(i)))
 

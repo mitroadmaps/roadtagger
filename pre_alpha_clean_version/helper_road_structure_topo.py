@@ -442,10 +442,10 @@ def TOPOGenerateStartingPoints(OSMMap, check = True, density = 0.00050, region =
 					break
 
 
-				if node_list[-2] == neighbor.keys()[0] :
-					cur_node = neighbor.keys()[1]
+				if node_list[-2] == list(neighbor.keys())[0] :
+					cur_node = list(neighbor.keys())[1]
 				else:
-					cur_node = neighbor.keys()[0]
+					cur_node = list(neighbor.keys())[0]
 
 
 			for i in range(1, len(node_list)-1):
@@ -527,7 +527,7 @@ def TOPOGenerateStartingPoints(OSMMap, check = True, density = 0.00050, region =
 
 
 
-	for _,edge in OSMMap.edges.iteritems():
+	for _,edge in OSMMap.edges.items():
 
 		svgEdges.append((OSMMap.nodes[edge[0]][0],OSMMap.nodes[edge[0]][1], OSMMap.nodes[edge[1]][0], OSMMap.nodes[edge[1]][1]))
 

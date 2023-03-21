@@ -11,7 +11,7 @@ import sys
 from time import time,sleep
 import random
 import json 
-
+import matplotlib
 from PIL import Image 
 
 
@@ -102,19 +102,19 @@ if __name__ == "__main__":
 
 	config = json.load(open(args.config,"r"))
 	output_folder = dataset_folder + config["folder"]
-	roadNetwork =  pickle.load(open(output_folder+"/roadnetwork.p", "r"))
+	roadNetwork =  pickle.load(open(output_folder+"/roadnetwork.p", "rb"))
 
 	roadNetwork.loadAnnotation(args.config, osm_auto=True, root_folder=dataset_folder)
 	
 	if args.tiles_name == "tiles":
 		try:
-			roadNetwork.sat_image = scipy.ndimage.imread(output_folder+"/sat_4096.png")
+			roadNetwork.sat_image = matplotlib.pyplot.imread(output_folder+"/sat_4096.png")
 		except:
-			roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
+			roadNetwork.sat_image = Image.fromarray(matplotlib.pyplot.imread(output_folder+"/sat_16384.png").astype(np.uint8)).resize((4096, 4096))
 	else:
-		roadNetwork.sat_image = scipy.misc.imresize(scipy.ndimage.imread(output_folder+"/sat_16384.png").astype(np.uint8), (4096, 4096))
+		roadNetwork.sat_image = Image.fromarray(matplotlib.pyplot.imread(output_folder+"/sat_16384.png").astype(np.uint8)).resize(4096, 4096)
 
-	osm_roadNetwork = pickle.load(open(output_folder+"/roadnetwork.p", "r"))
+	osm_roadNetwork = pickle.load(open(output_folder+"/roadnetwork.p", "rb"))
 	osm_roadNetwork.loadAnnotation(args.config, osm_auto=True, root_folder=dataset_folder, force_osm = True)
 
 

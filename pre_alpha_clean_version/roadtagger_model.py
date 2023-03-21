@@ -2,9 +2,9 @@ import roadtagger_tf_common_layer as common
 #import tf_common_layer_before20190225 as common
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import tflearn
-from tensorflow.contrib.layers.python.layers import batch_norm
 import random
 import pickle 
 import scipy.ndimage as nd 
@@ -313,7 +313,7 @@ class DeepRoadMetaInfoModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -358,7 +358,7 @@ class DeepRoadMetaInfoModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -396,13 +396,13 @@ class DeepRoadMetaInfoModel():
 		x = tf.layers.dense(inputs=input_features, units=128, activation=tf.nn.leaky_relu)
 		x = tf.layers.dense(inputs=x, units=128, activation=tf.nn.leaky_relu)
 
-		x_gnn = tf.concat([x for i in xrange(num_graphs)], axis = 1)
+		x_gnn = tf.concat([x for i in range(num_graphs)], axis = 1)
 
 		loop = self.number_of_gnn_layer
 		print("Number of GNN layer ", loop)
 
 
-		for i in xrange(loop):
+		for i in range(loop):
 			print("use gru generic")
 			x_gnn = common.create_gcn_layer_GRU_generic_one_fc('gcn_loop', x_gnn, graphs, 128, 128, activation = tf.nn.tanh)
 
@@ -435,7 +435,7 @@ class DeepRoadMetaInfoModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -475,7 +475,7 @@ class DeepRoadMetaInfoModel():
 
 		print("Number of GNN layer ", loop)
 
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
@@ -496,7 +496,7 @@ class DeepRoadMetaInfoModel():
 		# x__ = tf.layers.dense(inputs=x__, units=128, activation=tf.nn.leaky_relu)
 
 		x__ = x
-		for i in xrange(loop):
+		for i in range(loop):
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.leaky_relu)
 			#x_ = common.create_gcn_layer_2('gcn_loop'+str(i), x_, self.graph_structure, 128, 128, activation = tf.nn.tanh)
 			
